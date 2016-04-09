@@ -1,19 +1,22 @@
 var fs = require('fs');
+var p = require('path');
 
 module.exports = function(devDependencies, packageJsonFilePath) {
-  var buffer, packages, keys;
-  
-  buffer = fs.readFileSync(packageJsonFilePath || './package.json');
-  packages = JSON.parse(buffer.toString());
-  keys = [];
-  
+  packageJsonFilePath = packageJsonFilePath || './package.json';
+
+  var nodeModulesPath = p.dirname(packageJsonFilePath) + '/node_modules/';
+
+  var buffer = fs.readFileSync(packageJsonFilePath);
+  var packages = JSON.parse(buffer.toString());
+  var keys = [];
+
   for (key in packages.dependencies) {
-    keys.push('./node_modules/' + key + '/**/*');
+    keys.push(nodeModulesPath + key + '/**/*');
   }
 
   if (devDependencies) {
     for (key in packages.devDependencies) {
-      keys.push('./node_modules/' + key + '/**/*');
+      keys.push(nodeModulesPath + key + '/**/*');
     }
   }
 
